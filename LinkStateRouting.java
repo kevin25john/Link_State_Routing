@@ -37,8 +37,9 @@ class LinkStateRouting{
             String[] readChoice = scan.nextLine().split(" ");
             switch(readChoice[0].toUpperCase()){
                 case "C":
+                    //System.out.println(routerListMapActualID);
                     for(Router temp : routerList){
-                        //System.out.print(temp.ID + "  ");
+                        //System.out.print(temp.actualID + ",  ");
                         temp.originatePacket();
                     }
                     break;
@@ -49,13 +50,13 @@ class LinkStateRouting{
                     //routerListMapActualID.get(printInput).connectionList.size();
                     routerListMapActualID.get(printInput).printRoutingTable();
                     break;
-                case "S":
+                case "T":
                     int startInput = scan.nextInt();
                     routerListMapActualID.get(startInput).startRouter();
                     break;
-                case "T":
+                case "S":
                     int stopInput = scan.nextInt();
-                    routerListMapActualID.get(stopInput).startRouter();
+                    routerListMapActualID.get(stopInput).stopRouter();
                     break;
                 default:
                     System.out.println("invalid input");
@@ -166,9 +167,20 @@ class LinkStateRouting{
                     //System.out.println("test");
                     Iterator it = routerListMapActualID.entrySet().iterator();
                     while (it.hasNext()) {
+                        String connRead= "";
+
                         Map.Entry pair = (Map.Entry)it.next();
                         //System.out.print(pair.getKey());
-                        if((Integer)pair.getKey() == Integer.parseInt(read[1])){
+                        for(int i=1;i<read.length;i++){
+                            if(read[i].equals(" ")){
+                                break;
+                            }
+                            else{
+                                connRead = connRead + read[i];
+                            }
+                        }
+
+                        if((Integer)pair.getKey() == Integer.parseInt(connRead)){
                             destRouter = (Integer) pair.getKey();
                             //System.out.println(destRouter);
                         }
@@ -176,7 +188,16 @@ class LinkStateRouting{
                     }
                     //System.out.println(destRouter);
                     //routerList.get(count).connections(routerList.get(destRouter), Integer.parseInt(read[3]));
-                    routerListMapActualID.get(currentMainRouter).connections(routerListMapActualID.get(destRouter), Integer.parseInt(read[3]));
+                    String costRead = "";
+                    for(int i=1;i<read.length;i++){
+                        if(read[i].equals(" ")){
+                            for(int j=i+1;j<read.length;j++){
+                                costRead = costRead+1;
+                            }
+                        }
+                    }
+
+                    routerListMapActualID.get(currentMainRouter).connections(routerListMapActualID.get(destRouter), Integer.parseInt(costRead));
                     //routerList.get(count).connections(destRouter, Integer.parseInt(read[3]));
                     //System.out.println("test");
                 }
@@ -186,9 +207,21 @@ class LinkStateRouting{
                     //System.out.println(routerListMapActualID.get(currentMainRouter).actualID);
                     Iterator it = routerListMapActualID.entrySet().iterator();
                     while (it.hasNext()) {
+                        String connRead = "";
+
                         Map.Entry pair = (Map.Entry)it.next();
                         //System.out.print(pair.getKey());
-                        if((Integer)pair.getKey() == Integer.parseInt(read[1])){
+                        for(int i=1;i<read.length;i++){
+                            if(read[i].equals(" ")){
+                                break;
+                            }
+                            else{
+                                connRead = connRead + read[i];
+                            }
+                        }
+                        //System.out.println(connRead);
+
+                        if((Integer)pair.getKey() == Integer.parseInt(connRead)){
                             destRouter = (Integer) pair.getKey();
                             //System.out.println(destRouter);
                         }
@@ -304,30 +337,10 @@ class Router{
 
         }
 
-        //System.out.println( count);
 
         graph.djiktra(this.ID);
 
-        // for(Router rs : ls.routerList){
-        //     //count++;
-        //     //System.out.println("in graph loop");
-        //     Iterator it = rs.connectionList.entrySet().iterator();
-        //     while (it.hasNext()) {
-        //         Map.Entry pair = (Map.Entry)it.next();
-        //         //System.out.print(pair.getKey());
-                
-        //         //graph.addEdge(rs.ID,(Integer) pair.getKey(),(Integer) pair.getValue());
-        //         //System.out.println(rs.ID +" "+ (Integer) pair.getKey()+ " "+(Integer) pair.getValue());
-        //         //System.out.println(rs.ID);
-        //         graph.djiktra(rs.ID);
-
-                
-        //         //it.remove(); // avoids a ConcurrentModificationException
-        //     }  
-        // }
-
-
-        //System.out.println(); 
+        //this.routingTableList.clear();
 
 
     }
@@ -341,10 +354,13 @@ class Router{
     public void originatePacket(){
         
 
-        if(this.status){
+        if(this.status == true){
             //System.out.println(this.connectionList);
             //System.out.println("in Originate");
             //Router originrouter = this.router;
+            if(this.actualID ==1){
+                System.out.println("still going in");
+            }
             //System.out.println(originrouter.ID);
             Iterator it = this.connectionList.entrySet().iterator();
             //System.out.println(connectionList.size());
@@ -360,11 +376,12 @@ class Router{
                 if(!tickCheck.get((Integer) pair.getKey())){
                     tick = tick +1;
                     this.tickCounter.replace((Integer) pair.getKey(), tick);
+                    System.out.println(tick);
                 }
 
                 if(this.tickCounter.get(pair.getKey()) >1){
-                    this.connectionList.replace((Integer) pair.getKey(), 588);
-                    //System.out.println("test");
+                    this.connectionList.replace((Integer) pair.getKey(), 585858222);
+                    System.out.println("test");
                 }
                 else{
 
@@ -376,14 +393,16 @@ class Router{
                     //this.createGraph();
 
                     connectedRouter.receivePacket(new packet(originRouter, this.SN,(Integer) pair.getValue()), this.ID, this.ID);
-                    //System.out.println("test");
+                    System.out.println("originated on "+ this.ID);
+                    //if(connectedRouter.status ==true){
                     connectedRouter.tickCheck.replace(this.ID, true);
                     connectedRouter.tickCounter.replace(this.ID, 0);
+                    
+                    
                     this.SN++;
 
                 }
 
-                //router.router.receivePacket(new packet(originrouter, 1, cost, --TTL), originrouter.ID);
 
                 //it.remove(); // avoids a ConcurrentModificationException
             }
@@ -397,8 +416,8 @@ class Router{
 
     public void receivePacket(packet packet, int originRouterID, int receiverRouterID) {
         
-        if(this.status = true){
-
+        if(this.status == true){
+            System.out.println("packet received on" + this.actualID);
             LinkStateRouting lst = new LinkStateRouting();
             Router originRouter = lst.routerList.get(originRouterID);
             int currentRouterrID = this.ID;
@@ -425,7 +444,7 @@ class Router{
                     if((Integer) pair.getKey() != receiverRouterID){
 
                         Router forwardRouter = lst.routerList.get((Integer) pair.getKey());
-
+                        //System.out.println("packet received at "+ this.actualID);
                         forwardRouter.receivePacket(packet, originRouterID, this.ID);
                     }
                     
@@ -451,10 +470,12 @@ class Router{
 
     public void stopRouter(){
         this.status = false;
+        System.out.println(this.actualID+ " is stopped");
     
     }
 
     public void printRoutingTable(){
+        if(this.status ==true){
         this.createGraph();
         //System.out.println(this.status);
         System.out.println("Network \t Outgoing Link \t \t \tcost");                           ////
@@ -462,7 +483,13 @@ class Router{
         //System.out.println(routingTableMap.size());
         System.out.println(this.actualID + "\t \t \t"+ this.actualID + "\t \t \t" + "0");
         for(routingTable rs : routingTableList){
-            System.out.println(rs.router.actualID + "\t \t \t" + rs.outGoingLink.actualID + "\t \t \t" + rs.cost);
+            // if(rs.cost >58585822){
+
+            // }
+            // else{
+                System.out.println(rs.router.actualID + "\t \t \t" + rs.outGoingLink.actualID + "\t \t \t" + rs.cost);
+
+            //}
         }
 
 
@@ -484,6 +511,12 @@ class Router{
         //         //it.remove(); // avoids a ConcurrentModificationException
         //     }  
         //System.out.println(this.connectionList);
+
+        this.routingTableList.clear();
+        }
+        else{
+            System.out.println("Router "+ this.actualID + " is currently shut down.");
+        }
     }
 
 
