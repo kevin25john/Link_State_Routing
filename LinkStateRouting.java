@@ -451,17 +451,18 @@ class Router{
 
     public void stopRouter(){
         this.status = false;
+    
     }
 
     public void printRoutingTable(){
         this.createGraph();
         //System.out.println(this.status);
-        //System.out.println("Network \t Outgoing Link \t cost");                           ////
+        System.out.println("Network \t Outgoing Link \t \t \tcost");                           ////
         System.out.println();
         //System.out.println(routingTableMap.size());
-        System.out.println(this.actualID + "\t"+ this.actualID + "\t" + "0");
+        System.out.println(this.actualID + "\t \t \t"+ this.actualID + "\t \t \t" + "0");
         for(routingTable rs : routingTableList){
-            System.out.println(rs.router.actualID + "\t" + rs.outGoingLink.actualID + "\t" + rs.cost);
+            System.out.println(rs.router.actualID + "\t \t \t" + rs.outGoingLink.actualID + "\t \t \t" + rs.cost);
         }
 
 
