@@ -364,6 +364,7 @@ class Router{
             //System.out.println(originrouter.ID);
             Iterator it = this.connectionList.entrySet().iterator();
             //System.out.println(connectionList.size());
+            int tick = 0;
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
                 //System.out.print(pair.getKey());
@@ -371,17 +372,31 @@ class Router{
                 // routingTable outGoingLink = routingTableMap.get(pair.getKey());
                 // routingTable cost = routingTableMap.get(pair.getKey());
                 // routingTable TTL = routingTableMap.get(pair.getKey());
-                int tick = this.tickCounter.get((Integer) pair.getKey());
+                tick = this.tickCounter.get((Integer) pair.getKey());
 
                 if(!tickCheck.get((Integer) pair.getKey())){
                     tick = tick +1;
                     this.tickCounter.replace((Integer) pair.getKey(), tick);
-                    System.out.println(tick);
+                    //System.out.println(tick);
                 }
 
                 if(this.tickCounter.get(pair.getKey()) >1){
                     this.connectionList.replace((Integer) pair.getKey(), 585858222);
-                    System.out.println("test");
+                    System.out.println(this.connectionList);
+
+                    LinkStateRouting lsst = new LinkStateRouting();
+                    lsst.routerList.get((Integer) pair.getKey()).connectionList.replace(this.ID, 585858222);
+                    System.out.println(this.ID);
+                    System.out.println(lsst.routerList.get((Integer) pair.getKey()).connectionList);
+                    // Iterator itNew = this.connectionList.entrySet().iterator();
+                    // while(itNew.hasNext()){
+                    //     Map.Entry conn = (Map.Entry)it.next();
+
+
+
+
+                    // }
+                    //System.out.println("test");
                 }
                 else{
 
@@ -392,11 +407,14 @@ class Router{
                     //System.out.println(originRouter.ID);
                     //this.createGraph();
 
-                    connectedRouter.receivePacket(new packet(originRouter, this.SN,(Integer) pair.getValue()), this.ID, this.ID);
-                    System.out.println("originated on "+ this.ID);
-                    //if(connectedRouter.status ==true){
                     connectedRouter.tickCheck.replace(this.ID, true);
                     connectedRouter.tickCounter.replace(this.ID, 0);
+
+
+                    connectedRouter.receivePacket(new packet(originRouter, this.SN,(Integer) pair.getValue()), this.ID, this.ID);
+                    //System.out.println("originated on "+ this.ID);
+                    //if(connectedRouter.status ==true){
+                    
                     
                     
                     this.SN++;
@@ -408,6 +426,19 @@ class Router{
             }
             //this.createGraph();
         }
+        else{
+            Iterator it = this.connectionList.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry)it.next();
+                LinkStateRouting l = new LinkStateRouting();
+                Router connectedRouter = l.routerList.get((Integer)pair.getKey());
+                Router originRouter  = l.routerList.get(this.ID);
+                connectedRouter.tickCheck.replace(this.ID, false);
+                //connectedRouter.tickCounter.replace(this.ID, 0);
+
+            }
+
+        }
 
     }
 
@@ -417,7 +448,7 @@ class Router{
     public void receivePacket(packet packet, int originRouterID, int receiverRouterID) {
         
         if(this.status == true){
-            System.out.println("packet received on" + this.actualID);
+            //System.out.println("packet received on" + this.actualID);
             LinkStateRouting lst = new LinkStateRouting();
             Router originRouter = lst.routerList.get(originRouterID);
             int currentRouterrID = this.ID;
@@ -455,6 +486,13 @@ class Router{
             }
             
         }
+        else{
+            LinkStateRouting ls = new LinkStateRouting();
+            ls.routerList.get(receiverRouterID).tickCheck.replace(this.ID, false);
+            //ls.routerList.get(receiverRouterID).tickCounter.replace(this.ID, 0);
+            //receiverRouterID.tickCheck.replace(this.ID, true);
+            //receiverRouterID.tickCounter.replace(this.ID, 0);
+        }
 
 
     }
@@ -466,11 +504,12 @@ class Router{
 
     public void startRouter(){
         this.status = true;
+        System.out.println("Router "+this.actualID+ " is started");
     }
 
     public void stopRouter(){
         this.status = false;
-        System.out.println(this.actualID+ " is stopped");
+        System.out.println("Router "+this.actualID+ " is stopped");
     
     }
 
