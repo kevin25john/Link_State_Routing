@@ -32,36 +32,42 @@ class LinkStateRouting{
         while(true){
 
             System.out.println();
-            System.out.println("Enter 'C' to continue\n      'Q' to quit\n      'P' followed by the router\'s id number to print the routing table of a router\n      'S' followed by the id number to shut down a router\n      'T' followed by the id to start up a router ");
+            System.out.println("Enter 'C' to continue\n      'Q' to quit\n      'P' followed by a space and then the router\'s id number to print the routing table of a router\n      'S' followed by a space and then the id number to shut down a router\n      'T' followed by a space and then the id to start up a router ");
             Scanner scan = new Scanner(System.in);
-            String[] readChoice = scan.nextLine().split(" ");
-            switch(readChoice[0].toUpperCase()){
-                case "C":
-                    //System.out.println(routerListMapActualID);
-                    for(Router temp : routerList){
-                        //System.out.print(temp.actualID + ",  ");
-                        temp.originatePacket();
-                    }
-                    break;
-                case "Q":
-                    System.exit(0);
-                case "P":
-                    int printInput = scan.nextInt();
-                    //routerListMapActualID.get(printInput).connectionList.size();
-                    routerListMapActualID.get(printInput).printRoutingTable();
-                    break;
-                case "T":
-                    int startInput = scan.nextInt();
-                    routerListMapActualID.get(startInput).startRouter();
-                    break;
-                case "S":
-                    int stopInput = scan.nextInt();
-                    routerListMapActualID.get(stopInput).stopRouter();
-                    break;
-                default:
-                    System.out.println("invalid input");
-                    break;
+            String[] readChoice = scan.next().split(" ");
+            try {
+                switch(readChoice[0].toUpperCase()){
+                    case "C":
+                        //System.out.println(routerListMapActualID);
+                        for(Router temp : routerList){
+                            //System.out.print(temp.actualID + ",  ");
+                            temp.originatePacket();
+                        }
+                        break;
+                    case "Q":
+                        System.exit(0);
+                    case "P":
+                        int printInput = scan.nextInt();
+                        //routerListMapActualID.get(printInput).connectionList.size();
+                        routerListMapActualID.get(printInput).printRoutingTable();
+                        break;
+                    case "T":
+                        int startInput = scan.nextInt();
+                        routerListMapActualID.get(startInput).startRouter();
+                        break;
+                    case "S":
+                        int stopInput = scan.nextInt();
+                        routerListMapActualID.get(stopInput).stopRouter();
+                        break;
+                    default:
+                        System.out.println("invalid input");
+                        break;
+                }
+                
+            } catch (Exception e) {
+                System.out.println("Invalid Input");
             }
+            
 
         }
 
