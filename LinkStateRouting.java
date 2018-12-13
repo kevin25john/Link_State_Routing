@@ -1,30 +1,19 @@
 import java.io.*;
 import java.util.*;
 
-//import com.sun.tools.jdi.Packet;
 
 import java.lang.*;
-//import java.util.HashMap;
 
 class LinkStateRouting{
 
     public static LinkedList<Router> routerList = new LinkedList<Router>();
     public static HashMap<Integer,Router> routerListMapActualID = new HashMap<Integer,Router>();
-    //public static HashMap<Integer,Object> connectionList = new HashMap<>();
     public static int totalVertex;
     public static void main(String[] args) throws Exception{
 
         LinkStateRouting l = new LinkStateRouting();
         l.readFile();
-        // for(Router temp : routerList){
-        //     System.out.println(temp.ID + temp.networkName);
-        // }
-
-        // for(Router temp : routerList){
-        //     System.out.print(temp.ID + "  ");
-        //     System.out.println(temp.connectionList);
-        // }
-
+        
         totalVertex = routerList.size();
 
 
@@ -38,9 +27,7 @@ class LinkStateRouting{
             try {
                 switch(readChoice[0].toUpperCase()){
                     case "C":
-                        //System.out.println(routerListMapActualID);
                         for(Router temp : routerList){
-                            //System.out.print(temp.actualID + ",  ");
                             temp.originatePacket();
                         }
                         break;
@@ -48,16 +35,21 @@ class LinkStateRouting{
                         System.exit(0);
                     case "P":
                         int printInput = scan.nextInt();
-                        //routerListMapActualID.get(printInput).connectionList.size();
                         routerListMapActualID.get(printInput).printRoutingTable();
                         break;
                     case "T":
                         int startInput = scan.nextInt();
                         routerListMapActualID.get(startInput).startRouter();
+                        for(Router temp : routerList){
+                            temp.originatePacket();
+                        }
                         break;
                     case "S":
                         int stopInput = scan.nextInt();
                         routerListMapActualID.get(stopInput).stopRouter();
+                        for(Router temp : routerList){
+                            temp.originatePacket();
+                        }
                         break;
                     default:
                         System.out.println("invalid input");
@@ -84,13 +76,10 @@ class LinkStateRouting{
         while(sc.hasNextLine()){ //read network id and name
 
             String[] read = sc.nextLine().split("");
-            //System.out.println(read[0]);
             if(!read[0].equals(" ")){
-                //System.out.println(read.length);
                 String tmp = "";
                 int j=0;
                 for(int i=0;i<read.length;i++){
-                    //System.out.println();
 
                     if(read[i].equals(" ")){
                         j = i;
@@ -108,9 +97,7 @@ class LinkStateRouting{
                         }
                     }
                 }
-                //System.out.println(count);
-
-                //routerList.put(currentMainRouter, new Router(currentMainRouter, temp));
+                
                 routerList.add(new Router(count, temp));
 
                 routerList.get(count).actualID = currentMainRouter;
@@ -129,11 +116,9 @@ class LinkStateRouting{
 
             String[] read = scanConn.nextLine().split("");
             if(!read[0].equals(" ")){
-                //System.out.println(read.length);
                 String tmp = "";
                 int j=0;
                 for(int i=0;i<read.length;i++){
-                    //System.out.println();
 
                     if(read[i].equals(" ")){
                         j = i;
@@ -145,38 +130,21 @@ class LinkStateRouting{
                         tmp = "";
                     }
                     
-                    // else if(i>j && currentMainRouter!=0){
-                    //     if(read[i]!=" "){
-                    //         temp = temp + read[i];
-                    //     }
-                    // }
+                    
                 }
-                //System.out.println(currentMainRouter);
 
             }
 
 
             if(read[0].equals(" ")){
                 int destRouter = 0;
-            //System.out.println(read[1]);
                 if(read.length>2 && read.length>3){
-                    //connectionList.put(currentMainRouter, Integer.parseInt(read[4]));
                     
-                    // for(Router routs : routerList){
-                    //         //System.out.println(temp.ID + temp.networkName);
-                    //         if(routs.actualID == Integer.parseInt(read[1])){
-                    //             destRouter = routs.ID;
-                    //         }
-
-                    //     }
-
-                    //System.out.println("test");
                     Iterator it = routerListMapActualID.entrySet().iterator();
                     while (it.hasNext()) {
                         String connRead= "";
 
                         Map.Entry pair = (Map.Entry)it.next();
-                        //System.out.print(pair.getKey());
                         for(int i=1;i<read.length;i++){
                             if(read[i].equals(" ")){
                                 break;
@@ -188,12 +156,10 @@ class LinkStateRouting{
 
                         if((Integer)pair.getKey() == Integer.parseInt(connRead)){
                             destRouter = (Integer) pair.getKey();
-                            //System.out.println(destRouter);
                         }
                         //it.remove(); // avoids a ConcurrentModificationException
                     }
-                    //System.out.println(destRouter);
-                    //routerList.get(count).connections(routerList.get(destRouter), Integer.parseInt(read[3]));
+                    
                     String costRead = "";
                     for(int i=1;i<read.length;i++){
                         if(read[i].equals(" ")){
@@ -204,19 +170,15 @@ class LinkStateRouting{
                     }
 
                     routerListMapActualID.get(currentMainRouter).connections(routerListMapActualID.get(destRouter), Integer.parseInt(costRead));
-                    //routerList.get(count).connections(destRouter, Integer.parseInt(read[3]));
-                    //System.out.println("test");
+                    
                 }
                 else{
-                    //connectionList.put(currentMainRouter, 1);
-                    //routerList.get(count).connections(routerList.get(destRouter), 1);
-                    //System.out.println(routerListMapActualID.get(currentMainRouter).actualID);
+                    
                     Iterator it = routerListMapActualID.entrySet().iterator();
                     while (it.hasNext()) {
                         String connRead = "";
 
                         Map.Entry pair = (Map.Entry)it.next();
-                        //System.out.print(pair.getKey());
                         for(int i=1;i<read.length;i++){
                             if(read[i].equals(" ")){
                                 break;
@@ -225,17 +187,13 @@ class LinkStateRouting{
                                 connRead = connRead + read[i];
                             }
                         }
-                        //System.out.println(connRead);
 
                         if((Integer)pair.getKey() == Integer.parseInt(connRead)){
                             destRouter = (Integer) pair.getKey();
-                            //System.out.println(destRouter);
                         }
                         //it.remove(); // avoids a ConcurrentModificationException
                     }
-                    //System.out.println(destRouter);
                     routerListMapActualID.get(currentMainRouter).connections(routerListMapActualID.get(destRouter), 1);
-                    //System.out.println(routerListMapActualID.size());
                 }
                 
                 count ++;
@@ -255,7 +213,6 @@ class Router{
     int actualID;
     String networkName;
     Boolean status;
-    //ArrayList<Triplet> routingTable;
     HashMap<Integer,Integer> connectionList;
     HashMap<routingTable, Integer> routingTableMap;
     HashMap<Integer, Integer> highestSeqNumber;
@@ -285,28 +242,23 @@ class Router{
         this.SN = 1;
         this.receivedLSP = false;
         this.tick = 0;
-        //this.createGraph();
 
     }
 
     public void connections(Router router, int cost){
-        //this.router = router;
-        //System.out.println(router.actualID);
+        
         this.connectionList.put(router.ID, cost);
-        //System.out.println(this.connectionList);
-        //System.out.println(this.ID);
+        
         Iterator it = this.connectionList.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
-                //System.out.print(pair.getKey());
                 this.tickCounter.put((Integer)pair.getKey(), 0);
                 this.tickCheck.put((Integer)pair.getKey(), false);
                 //it.remove(); // avoids a ConcurrentModificationException
             }
         
 
-        //this.routingTableList.add(new routingTable(router,router,cost,0,0));
-        //this.routingTableMap.put(router.ID, new routingTable(router,router,cost,0,0));
+        
     }
 
    
@@ -361,65 +313,43 @@ class Router{
         
 
         if(this.status == true){
-            //System.out.println(this.connectionList);
-            //System.out.println("in Originate");
-            //Router originrouter = this.router;
-            if(this.actualID ==1){
-                System.out.println("still going in");
-            }
-            //System.out.println(originrouter.ID);
+            
             Iterator it = this.connectionList.entrySet().iterator();
-            //System.out.println(connectionList.size());
             int tick = 0;
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
-                //System.out.print(pair.getKey());
-                // routingTable router = routingTableMap.get(pair.getKey());
-                // routingTable outGoingLink = routingTableMap.get(pair.getKey());
-                // routingTable cost = routingTableMap.get(pair.getKey());
-                // routingTable TTL = routingTableMap.get(pair.getKey());
+                
                 tick = this.tickCounter.get((Integer) pair.getKey());
 
                 if(!tickCheck.get((Integer) pair.getKey())){
                     tick = tick +1;
                     this.tickCounter.replace((Integer) pair.getKey(), tick);
-                    //System.out.println(tick);
                 }
 
                 if(this.tickCounter.get(pair.getKey()) >1){
                     this.connectionList.replace((Integer) pair.getKey(), 585858222);
-                    System.out.println(this.connectionList);
+                    //System.out.println(this.connectionList);
 
                     LinkStateRouting lsst = new LinkStateRouting();
                     lsst.routerList.get((Integer) pair.getKey()).connectionList.replace(this.ID, 585858222);
-                    System.out.println(this.ID);
-                    System.out.println(lsst.routerList.get((Integer) pair.getKey()).connectionList);
-                    // Iterator itNew = this.connectionList.entrySet().iterator();
-                    // while(itNew.hasNext()){
-                    //     Map.Entry conn = (Map.Entry)it.next();
-
-
-
-
-                    // }
-                    //System.out.println("test");
+                    //System.out.println(lsst.routerList.get(0).connectionList);
+                    //System.out.println(this.ID);
+                    //System.out.println(lsst.routerList.get((Integer) pair.getKey()).connectionList);
+                    
                 }
                 else{
 
                     LinkStateRouting l = new LinkStateRouting();
                     Router connectedRouter = l.routerList.get((Integer)pair.getKey());
                     Router originRouter  = l.routerList.get(this.ID);
-                    //System.out.print(connectedRouter.ID);
-                    //System.out.println(originRouter.ID);
-                    //this.createGraph();
+                    
 
                     connectedRouter.tickCheck.replace(this.ID, true);
                     connectedRouter.tickCounter.replace(this.ID, 0);
 
 
                     connectedRouter.receivePacket(new packet(originRouter, this.SN,(Integer) pair.getValue()), this.ID, this.ID);
-                    //System.out.println("originated on "+ this.ID);
-                    //if(connectedRouter.status ==true){
+                    
                     
                     
                     
@@ -430,7 +360,6 @@ class Router{
 
                 //it.remove(); // avoids a ConcurrentModificationException
             }
-            //this.createGraph();
         }
         else{
             Iterator it = this.connectionList.entrySet().iterator();
@@ -440,7 +369,6 @@ class Router{
                 Router connectedRouter = l.routerList.get((Integer)pair.getKey());
                 Router originRouter  = l.routerList.get(this.ID);
                 connectedRouter.tickCheck.replace(this.ID, false);
-                //connectedRouter.tickCounter.replace(this.ID, 0);
 
             }
 
@@ -471,23 +399,15 @@ class Router{
                 Iterator it = this.connectionList.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry pair = (Map.Entry)it.next();
-                    //System.out.print(pair.getKey());
-                    // routingTable router = routingTableMap.get(pair.getKey());
-                    // routingTable outGoingLink = routingTableMap.get(pair.getKey());
-                    // routingTable cost = routingTableMap.get(pair.getKey());
-                    // routingTable TTL = routingTableMap.get(pair.getKey());
-                
-
+                    
                     if((Integer) pair.getKey() != receiverRouterID){
 
                         Router forwardRouter = lst.routerList.get((Integer) pair.getKey());
-                        //System.out.println("packet received at "+ this.actualID);
                         forwardRouter.receivePacket(packet, originRouterID, this.ID);
                     }
                     
                     //it.remove(); // avoids a ConcurrentModificationException
                 }
-                //this.createGraph();
 
             }
             
@@ -495,18 +415,14 @@ class Router{
         else{
             LinkStateRouting ls = new LinkStateRouting();
             ls.routerList.get(receiverRouterID).tickCheck.replace(this.ID, false);
-            //ls.routerList.get(receiverRouterID).tickCounter.replace(this.ID, 0);
-            //receiverRouterID.tickCheck.replace(this.ID, true);
-            //receiverRouterID.tickCounter.replace(this.ID, 0);
+            
         }
 
 
     }
 
 
-    public void updateRoutingTable(){
-
-    }
+    
 
     public void startRouter(){
         this.status = true;
@@ -522,40 +438,17 @@ class Router{
     public void printRoutingTable(){
         if(this.status ==true){
         this.createGraph();
-        //System.out.println(this.status);
-        System.out.println("Network \t Outgoing Link \t \t \tcost");                           ////
+        System.out.println("Network \t Outgoing Link \t \t \tcost");                           
         System.out.println();
-        //System.out.println(routingTableMap.size());
         System.out.println(this.actualID + "\t \t \t"+ this.actualID + "\t \t \t" + "0");
         for(routingTable rs : routingTableList){
-            // if(rs.cost >58585822){
+            
+            System.out.println(rs.router.actualID + "\t \t \t" + rs.outGoingLink.actualID + "\t \t \t" + rs.cost);
 
-            // }
-            // else{
-                System.out.println(rs.router.actualID + "\t \t \t" + rs.outGoingLink.actualID + "\t \t \t" + rs.cost);
-
-            //}
         }
 
 
-        // Iterator it = this.routingTableMap.entrySet().iterator();
-        //     while (it.hasNext()) {
-        //         Map.Entry pair = (Map.Entry)it.next();
-        //         //System.out.print(pair.getKey());
-
-        //         routingTable actualID = (routingTable)pair.getKey(); 
-        //         //routingTableMap.get(pair.getKey());
-        //         routingTable cost = (routingTable)pair.getKey();
-        //         //routingTableMap.get(pair.getKey());
-
-                
-        //         System.out.print(pair.getValue() + "\t" + actualID.router.actualID + "\t" + cost.cost); ////////////
-        //         //System.out.print();
-        //         System.out.println(); ///////////////////////////////////
-                
-        //         //it.remove(); // avoids a ConcurrentModificationException
-        //     }  
-        //System.out.println(this.connectionList);
+        
 
         this.routingTableList.clear();
         }
@@ -587,7 +480,6 @@ class Router{
         int graphMatrix[][];
         routingTable routingTable;
         LinkStateRouting ls;
-        //LinkedList<Integer> adjlistArr[];
         public Graph(int vertex){
             this.vertices = vertex;
             graphMatrix = new int[vertex][vertex];
@@ -607,10 +499,8 @@ class Router{
                 if(mst[i]==false && minKey>key[i]){
                     minKey = key[i];
                     vertex = i;
-                    //System.out.println("testVe");
                 }
             }
-            //System.out.println(vertex);
             return vertex;
         }
 
@@ -620,7 +510,6 @@ class Router{
             int INFINITY = Integer.MAX_VALUE;
         
             
-            //System.out.println("dijiktra called");
             for(int i =0;i<vertices;i++){
                 dist[i] = INFINITY;
             }
@@ -631,13 +520,10 @@ class Router{
             for(int i=0; i<vertices;i++){
 
                 int vertex_u = getMinimum(spt, dist);
-                //int vertex_U = getMinimumVertex(spt, distance);
-                //System.out.print(vertex_U + ". ");
+                
                 if(vertex_u != source && this.ls.routerList.get(source).connectionList.containsKey(vertex_u)){
                     outgoingVertex = vertex_u;
-                    //System.out.print(outgoingVertex + ". ");   
                 }
-                //System.out.println(vertex_u);
 
                 spt[vertex_u] = true;
                 
@@ -651,28 +537,15 @@ class Router{
                             if(newKey<dist[vertex_v]){
                                 dist[vertex_v] = newKey;
                                 
-                                //System.out.print(vertex_v + " ");
                                 if(outgoingVertex != source){
-                                    //System.out.print(outgoingVertex + ". ");
                                     this.ls.routerList.get(source).routingTableList.add(new routingTable(this.ls.routerList.get(vertex_v), this.ls.routerList.get(outgoingVertex), newKey));
 
                                 }
                                 else{
-                                    //System.out.print(vertex_v + ". ");
-                                    //System.out.println("test");
+                                    
                                     this.ls.routerList.get(source).routingTableList.add(new routingTable(this.ls.routerList.get(vertex_v), this.ls.routerList.get(vertex_v), newKey));
 
                                 }
-                                //System.out.print(newKey);
-                                //System.out.println();
-                                // if(this.ls.routerList.get(source).routingTableMap.containsKey(this.ls.routerList.get(outgoingVertex).actualID)){
-                                //     //System.out.println("test1");
-                                //     this.ls.routerList.get(source).routingTableMap.replace(this.ls.routerList.get(outgoingVertex).actualID, new routingTable(this.ls.routerList.get(outgoingVertex), this.ls.routerList.get(vertex_v), newKey));
-                                // }
-                                // else{
-                                    //System.out.println("test");
-                                    //this.ls.routerList.get(source).routingTableMap.put(new routingTable(this.ls.routerList.get(outgoingVertex), this.ls.routerList.get(vertex_v), newKey), this.ls.routerList.get(outgoingVertex).actualID);
-                                //}
 
                                 
                             }
@@ -687,7 +560,7 @@ class Router{
 
             }
 
-            ///
+            
         }
 
 
